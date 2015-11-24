@@ -830,5 +830,15 @@ public class World {
     public List<Threat> getThreats() {
         return Collections.unmodifiableList(threats);
     }
+
+    public ArrayList<Conflict> getConflicts() {
+        return conflicts;
+    }
+
+    public ArrayList<Obstacle> getObstacles() {
+        return obstacles;
+    }
+    
+    
     
 }

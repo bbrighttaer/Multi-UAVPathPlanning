@@ -5,10 +5,11 @@
  */
 package ui;
 
+import graphAnalysisAPI.GraphAPI;
+import graphAnalysisAPI.GraphAPI.GraphAPIobjectFactory;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -22,7 +23,8 @@ import world.model.Threat;
 public class MainFrame extends javax.swing.JFrame {
 
 
-    DefaultListModel listModel;
+    private final DefaultListModel listModel;
+    private final GraphAPI graphAPI;
     /**
      * Creates new form MainFrame
      */
@@ -30,11 +32,15 @@ public class MainFrame extends javax.swing.JFrame {
     {
         this.listModel = new DefaultListModel();
         initComponents();
+        graphAPI = GraphAPIobjectFactory.createGraphAPIobject(animationPanel1);
         this.animationPanel1.start();
         initiateThreatsInList();
-        this.jSplitPane1.setDividerLocation(.9);
+        this.jSplitPane1.setDividerLocation(1.0);
     }
-
+    
+    /**
+     * Handles printing all threats in the world in the JList swing UI control object
+     */
     private void initiateThreatsInList()
     {
         SimulationComponentsUIx.jList_threats.setModel(listModel);
@@ -46,14 +52,10 @@ public class MainFrame extends javax.swing.JFrame {
         SimulationComponentsUIx.jList_threats.addListSelectionListener(new ListSelectionListener() {
 
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        JOptionPane.showMessageDialog(null, SimulationComponentsUIx.jList_threats.getSelectedValue().toString());
-                    }
-                }).start();
+            public void valueChanged(ListSelectionEvent e) 
+            {
+                final Threat selThreat = (Threat)SimulationComponentsUIx.jList_threats.getSelectedValue();
+                graphAPI.setSelectedTask(selThreat);
             }
         });
     }

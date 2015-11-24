@@ -80,7 +80,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
 
     private MyGraphic virtualizer;
 
-    private static ArrayList<Attacker> attackers;
+    private ArrayList<Attacker> attackers;
     private ArrayList<Threat> threats_from_god_view;
     private ArrayList<Scout> scouts;
     private UAVBase uav_base;
@@ -203,10 +203,10 @@ public class AnimationPanel extends JPanel implements MouseListener {
         t.start();
     }
 
-    public static void setHighlightUAV(int uav_index) {
+    public void setHighlightUAV(int uav_index) {
         AnimationPanel.highlight_uav_index = uav_index;
         Attacker highlight_uav = null;
-        for (Attacker attacker : AnimationPanel.attackers) {
+        for (Attacker attacker : attackers) {
             if (attacker.getIndex() == uav_index) {
                 highlight_uav = attacker;
             }
@@ -372,7 +372,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
         if (!StaticInitConfig.SHOW_FOG_OF_WAR) {
             return;
         }
-        for (Attacker attcker : AnimationPanel.attackers) {
+        for (Attacker attcker : attackers) {
             virtualizer.drawUAVInFogOfWarInLevel3(fog_of_war_graphics, (UAV) attcker);
         }
         for (Scout scout : this.scouts) {
@@ -413,7 +413,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         StaticInitConfig.SIMULATION_ON = true;
         int chosen_attacker_index = findChosenAttacker(e.getPoint());
-        AnimationPanel.setHighlightUAV(chosen_attacker_index);
+        setHighlightUAV(chosen_attacker_index);
     }
 
     private int findChosenAttacker(Point mouse_point) {
@@ -436,7 +436,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
             if (chosen_attacker_index == -1) {
                 return;
             }
-            AnimationPanel.setHighlightUAV(chosen_attacker_index);
+            setHighlightUAV(chosen_attacker_index);
             my_popup_menu.setChoosedAttackerIndex(chosen_attacker_index);
             my_popup_menu.show(this, e.getX(), e.getY());
             StaticInitConfig.SIMULATION_ON = false;
@@ -505,6 +505,14 @@ public class AnimationPanel extends JPanel implements MouseListener {
 
     public World getWorld() {
         return world;
+    }
+
+    public ArrayList<Attacker> getAttackers() {
+        return attackers;
+    }
+
+    public ArrayList<Scout> getScouts() {
+        return scouts;
     }
     
     
