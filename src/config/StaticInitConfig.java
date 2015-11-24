@@ -5,6 +5,7 @@
  */
 package config;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.Timer;
 import world.model.Threat;
 
@@ -91,4 +92,8 @@ public class StaticInitConfig {
     public static boolean UI_PARAMETER_CONFIG = false;
 
     public static int LOCKED_TIME_STEP_UNTIL_DESTROYED = 20;
+    
+    
+    public static AtomicInteger TOTAL_MESSAGES_SENT_IN_CURRENT_SIMULATION_TIMESTEP_broadcast = new AtomicInteger(0);
+    public static AtomicInteger TOTAL_MESSAGES_SENT_IN_CURRENT_SIMULATION_TIMESTEP_registerbased = new AtomicInteger(0);
 }

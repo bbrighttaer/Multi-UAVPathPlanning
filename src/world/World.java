@@ -5,6 +5,8 @@
  */
 package world;
 
+import chart.Broadcast_pseudoDispatch;
+import chart.InfoSharing_pseudoDispatch;
 import config.FilePathConfig;
 import world.model.Threat;
 import world.model.Obstacle;
@@ -442,18 +444,45 @@ public class World {
     /**register information requirement for attackers, according to its target and location.
      * 
      */
-    private void registerInfoRequirement() {
-        for (int i = 0; i < this.attacker_num; i++) {
-            Attacker attacker = World.attackers.get(i);
+    private void registerInfoRequirement()
+    {
+        for (int i = 0; i < this.attacker_num; i++)
+        {
+            final Attacker attacker = World.attackers.get(i);
             if (!attacker.isVisible()) {
                 continue;
             }
-            Target target = attacker.getTarget_indicated_by_role();
+            final Target target = attacker.getTarget_indicated_by_role();
             if (target != null) {
-                float[] attacker_coord = attacker.getCenter_coordinates();
+                final float[] attacker_coord = attacker.getCenter_coordinates();
                 this.msg_dispatcher.register(attacker.getIndex(), attacker_coord, target);
+                
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        performPseudoDispatchForChartData(attacker, attacker_coord, target);
+                    }
+                }).start();
             }
         }
+    }
+    
+    /**
+     * This method is used to mimic broadcast and register-based/info-sharing
+     * algorithms in order to gather the chart data but actually doesn't dispatch.
+     * @param attacker
+     * @param current_loc
+     * @param target
+     */
+    public void performPseudoDispatchForChartData(Attacker attacker, float[] current_loc, Target target)
+    {
+        Broadcast_pseudoDispatch broadcast = new Broadcast_pseudoDispatch(control_center);
+        broadcast.register(attacker.getIndex(), attacker.getCenter_coordinates(), target);
+        broadcast.decideAndSumitMsgToSend();
+        InfoSharing_pseudoDispatch infoSharing = new InfoSharing_pseudoDispatch(control_center);
+        infoSharing.register(attacker.getIndex(), attacker.getCenter_coordinates(), target);
+        infoSharing.decideAndSumitMsgToSend();
     }
 
     /**share information every 3 time step.
