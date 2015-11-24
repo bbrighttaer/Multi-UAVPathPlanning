@@ -95,7 +95,7 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
             rrt_alg = new RRTAlg(super.getCenter_coordinates(), target.getCoordinates(), StaticInitConfig.rrt_goal_toward_probability, World.bound_width, World.bound_height, StaticInitConfig.rrt_iteration_times, speed, null, this.getConflicts(), this.index);
         }
         initColor(index);
-//        attackThreatDaemon();
+        attackThreatDaemon();
     }
 
  
@@ -538,18 +538,21 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
             public void run() 
             {
 //                updateAll_local();
-                if(kb.getThreats().size() > 0)
+                synchronized(kb)
                 {
-                    for(Threat threat : kb.getThreats())
+                    if(kb.getThreats().size() > 0)
                     {
-                        if(!getDestroyedThreats().contains(threat) && getFly_mode()!= Attacker.TARGET_LOCKED_MODE)
+                        for(Threat threat : kb.getThreats())
                         {
-                            if (threat.getThreatType().toString().equals(getAttackerType().toString())) 
+                            if(!getDestroyedThreats().contains(threat) && getFly_mode()!= Attacker.TARGET_LOCKED_MODE)
                             {
-                                setTarget_indicated_by_role(threat);
-                                setNeed_to_replan(true);
-                                setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_ON_TASK);
-                                setFly_mode(Attacker.FLYING_MODE);
+                                if (threat.getThreatType().toString().equals(getAttackerType().toString())) 
+                                {
+                                    setTarget_indicated_by_role(threat);
+                                    setNeed_to_replan(true);
+                                    setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_ON_TASK);
+                                    setFly_mode(Attacker.FLYING_MODE);
+                                }
                             }
                         }
                     }

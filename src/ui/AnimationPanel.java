@@ -487,7 +487,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
 //                seconds = seconds - hours * 3600 - minimutes * 60;
                 int minimutes = simulation_time_step;
                 int hours = minimutes / 60;
-                minimutes=minimutes-hours*60;
+                minimutes -= hours*60;
 //                String simulated_time_str = String.format("%1$02d:%2$02d:%3$02d", hours, minimutes, seconds);
                 String simulated_time_str = String.format("%1$02d:%2$02d:%3$02d", hours, minimutes, 0);
                 ControlPanel.jFormattedTextField1.setText(simulated_time_str);

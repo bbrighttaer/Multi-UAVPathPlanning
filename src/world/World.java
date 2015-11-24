@@ -579,7 +579,7 @@ public class World {
         logger.debug("information register over");
         shareInfoAfterRegistration();
         logger.debug("information share over");
-        roleAssignmentInControlCenter();
+//        roleAssignmentInControlCenter();
         logger.debug("role assign in control center over");
         planPathForAllAttacker();
         logger.debug("path planning for attackers over");

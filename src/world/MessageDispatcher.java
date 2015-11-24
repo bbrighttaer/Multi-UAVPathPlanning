@@ -96,7 +96,7 @@ public abstract class MessageDispatcher {
     public void addRecvMessage(Integer recv_attacker_index, Message msg) {
         LinkedList<Message> recv_list = this.recv_msg_list.get(recv_attacker_index);
         if (recv_list == null) {
-            recv_list = new LinkedList<Message>();
+            recv_list = new LinkedList<>();
         }
         recv_list.add(msg);
         this.recv_msg_list.put(recv_attacker_index, recv_list);

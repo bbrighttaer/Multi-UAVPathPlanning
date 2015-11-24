@@ -45,9 +45,9 @@ import world.model.shape.Point;
 
 /**
  *
- * @author boluo
+ * @author Yulin_Zhang
  */
-public class OntologyBasedKnowledge extends KnowledgeInterface {
+public final class OntologyBasedKnowledge extends KnowledgeInterface {
 
     public OntModel ontology_based_knowledge;
     public static String base_ns = "http://www.multiagent.com.cn/robotontology/";
@@ -65,7 +65,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
     public DatatypeProperty hasExpectedConflictTime, hasDecidedConflictTime, conflictFromRobot;
     public ObjectProperty has_region, has_polygon, has_lowerbound, has_upperbound, rdf_type;
     public DatatypeProperty hasConflictCenter, hasConflictRange;
-    public DatatypeProperty hasThreatCenter, hasThreatSpeed, hasThreatRange, hasThreatCapability, hasThreatIndex, threatEnabled;
+    public DatatypeProperty hasThreatCenter, hasThreatSpeed, hasThreatRange, hasThreatCapability, hasThreatIndex, threatEnabled, hasType;
     public DatatypeProperty has_points, hasMaxXCoordinate, hasMaxYCoordinate, hasMinXCoordinate, hasMinYCoordinate, hasObstacleIndex;
 
     public RDFNode null_node = null;
@@ -74,9 +74,9 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
      *
      */
     public boolean obstacle_updated = false, threat_updated = false, conflict_updated = false;
-    public ArrayList<Obstacle> obstacles_cache = new ArrayList<Obstacle>();
-    public ArrayList<Threat> threats_cache = new ArrayList<Threat>();
-    public ArrayList<Conflict> conflicts_cache = new ArrayList<Conflict>();
+    public ArrayList<Obstacle> obstacles_cache = new ArrayList<>();
+    public ArrayList<Threat> threats_cache = new ArrayList<>();
+    public ArrayList<Conflict> conflicts_cache = new ArrayList<>();
 
     public OntologyBasedKnowledge() {
         super();
@@ -119,6 +119,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         hasThreatCapability = ontology_based_knowledge.createDatatypeProperty(base_ns + "hasThreatCapability");
         hasThreatIndex = ontology_based_knowledge.createDatatypeProperty(base_ns + "hasThreatIndex");
         threatEnabled = ontology_based_knowledge.createDatatypeProperty(base_ns + "threatEnabled");
+        hasType = ontology_based_knowledge.createDatatypeProperty(base_ns + "hasType");
 
         //class and property for conflict
         Conflict_Class = ontology_based_knowledge.createClass(base_ns + "Conflict");
@@ -139,7 +140,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         float[] coord = new float[2];
         coord[0] = 2;
         coord[1] = 3;
-        Threat threat = new Threat(0, coord, 0, ThreatType.DUMMY);
+        Threat threat = new Threat(0, coord, 3, ThreatType.TYPE1);
         threat.setSpeed(2);
         threat.setThreat_cap("aaa");
         threat.setThreat_range(2);
@@ -149,7 +150,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         float[] coord1 = new float[2];
         coord1[0] = 1;
         coord1[0] = 2;
-        Threat threat1 = new Threat(1, coord1, 4, ThreatType.DUMMY);
+        Threat threat1 = new Threat(1, coord1, 4, ThreatType.TYPE1);
         threat1.setEnabled(false);
         kb.addThreat(threat1);
         kb.removeThreat(threat1);
@@ -172,7 +173,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
 //        OntologyBasedKnowledge.printStatements(kb.ontology_based_knowledge);
 //        logger.debug(OntologyBasedKnowledge.printOntology(kb.ontology_based_knowledge));
 //        OntologyBasedKnowledge.printStatements(kb.ontology_based_knowledge);
-        LinkedList<Point> path = new LinkedList<Point>();
+        LinkedList<Point> path = new LinkedList<>();
         Point point1 = new Point(1, 1, 0);
         point1.setDecision_time_step(0);
         point1.setExptected_time_step(0);
@@ -192,7 +193,6 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
                 logger.debug(temp_point.getExptected_time_step() + "\t" + temp_point.toString());
             }
         }
-        logger.debug(kb.getConflicts().size());
 //        logger.debug(OntologyBasedKnowledge.printOntology(kb.ontology_based_knowledge));
     }
 
@@ -266,7 +266,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         if (!this.obstacle_updated) {
             return this.obstacles_cache;
         }
-        ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+        ArrayList<Obstacle> obstacles = new ArrayList<>();
         String sparql = "SELECT ?points ?index"
                 + "{"
                 + "?obstacle_ind mars:hasRegion ?region_ind ."
@@ -277,24 +277,28 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         Query query = QueryFactory.create(prefix + sparql);
         QueryExecution qe = QueryExecutionFactory.create(query, ontology_based_knowledge);
         ResultSet results = qe.execSelect();
+                
         while (results.hasNext()) {
             QuerySolution result = results.next();
             Polygon polygon = new Polygon();
-            String raw_points_str = StringUtil.parseLiteralStr(result.get("points").toString());
-            String[] points_str = raw_points_str.split(" ");
-            for (String point_str : points_str) {
-                String[] coord_str = point_str.split(",");
-                int[] coord = new int[2];
-                coord[0] = Integer.parseInt(coord_str[0]);
-                coord[1] = Integer.parseInt(coord_str[1]);
-                polygon.addPoint(coord[0], coord[1]);
-            }
+            synchronized(polygon)
+            {
+                String raw_points_str = StringUtil.parseLiteralStr(result.get("points").toString());
+                String[] points_str = raw_points_str.split(" ");
+                for (String point_str : points_str) {
+                    String[] coord_str = point_str.split(",");
+                    int[] coord = new int[2];
+                    coord[0] = Integer.parseInt(coord_str[0]);
+                    coord[1] = Integer.parseInt(coord_str[1]);
+                    polygon.addPoint(coord[0], coord[1]);
+                }
 
-            String raw_obstacle_index = StringUtil.parseLiteralStr(result.get("index").toString());
-            Integer obstacle_index = Integer.parseInt(raw_obstacle_index);
-            Obstacle obstacle = new Obstacle(polygon, 0);
-            obstacle.setIndex(obstacle_index);
-            obstacles.add(obstacle);
+                String raw_obstacle_index = StringUtil.parseLiteralStr(result.get("index").toString());
+                Integer obstacle_index = Integer.parseInt(raw_obstacle_index);
+                Obstacle obstacle = new Obstacle(polygon, 0);
+                obstacle.setIndex(obstacle_index);
+                obstacles.add(obstacle);
+            }
         }
         this.obstacles_cache = obstacles;
         this.obstacle_updated = false;
@@ -306,8 +310,8 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         if (!this.conflict_updated) {
             return this.conflicts_cache;
         }
-        ArrayList<Conflict> conflicts = new ArrayList<Conflict>();
-        Map<Integer, Conflict> conflict_map = new HashMap<Integer, Conflict>();
+        ArrayList<Conflict> conflicts = new ArrayList<>();
+        Map<Integer, Conflict> conflict_map = new HashMap<>();
         String sparql = "SELECT ?conflict_center ?conflict_range ?exptected_conflict_time ?decided_conflict_time ?uav_index"
                 + "{"
                 + "?conflict_ind rdf:type mars:Conflict ."
@@ -347,7 +351,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
 
             Conflict conflict = conflict_map.get(uav_index);
             if (conflict == null) {
-                LinkedList<Point> path = new LinkedList<Point>();
+                LinkedList<Point> path = new LinkedList<>();
                 conflict = new Conflict(uav_index, path, decided_conflict_time, range);
                 conflict_map.put(uav_index, conflict);
             }
@@ -365,61 +369,73 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         return conflicts;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
-    public ArrayList<Threat> getThreats() {
-        if (!this.threat_updated) {
+    public synchronized ArrayList<Threat> getThreats() {
+         if (!this.threat_updated) {
             return this.threats_cache;
         }
-        ArrayList<Threat> threats = new ArrayList<Threat>();
-        String sparql = "SELECT ?center ?speed ?range ?threatCap ?index ?threat_enabled"
-                + "{"
-                + "?threat_ind mars:hasThreatCenter ?center ."
-                + "?threat_ind mars:hasThreatSpeed ?speed ."
-                + "?threat_ind mars:hasThreatRange ?range ."
-                + "?threat_ind mars:hasThreatIndex ?index ."
-                + "?threat_ind mars:threatEnabled ?threat_enabled ."
-                + "?threat_ind mars:hasThreatCapability ?threatCap"
-                + "}";
+        ArrayList<Threat> threats = new ArrayList<>();
+        String sparql = "SELECT  ?center ?speed ?range ?threatCap ?index ?threat_enabled ?threatType WHERE "+
+               " { "+
+               " { ?threat_ind mars:hasThreatCenter ?center . }"+
+               " { ?threat_ind mars:hasThreatSpeed ?speed . } "+
+               " { ?threat_ind mars:hasThreatRange ?range . } "+
+               " { ?threat_ind mars:hasThreatIndex ?index . } "+
+               " { ?threat_ind mars:threatEnabled ?threat_enabled . } "+
+               " { ?threat_ind mars:hasThreatCapability ?threatCap. } "+
+               " { ?threat_ind mars:hasType ?threatType } "+
+               " }";
         Query query = QueryFactory.create(prefix + sparql);
         QueryExecution qe = QueryExecutionFactory.create(query, ontology_based_knowledge);
         ResultSet results = qe.execSelect();
-        while (results.hasNext()) {
-            QuerySolution result = results.next();
-            String raw_center_str = StringUtil.parseLiteralStr(result.get("center").toString());
-            String[] coord_str = raw_center_str.split(",");
-            float[] center_coord = new float[2];
-            center_coord[0] = Float.parseFloat(coord_str[0]);
-            center_coord[1] = Float.parseFloat(coord_str[1]);
+        
+        synchronized(results)
+        {
+            while (results.hasNext()) 
+            {
+                QuerySolution result = results.next();
+                String raw_center_str = StringUtil.parseLiteralStr(result.get("center").toString());
+                String[] coord_str = raw_center_str.split(",");
+                float[] center_coord = new float[2];
+                center_coord[0] = Float.parseFloat(coord_str[0]);
+                center_coord[1] = Float.parseFloat(coord_str[1]);
 
-            String raw_speed_str = StringUtil.parseLiteralStr(result.get("speed").toString());
-            float speed = Float.parseFloat(raw_speed_str);
+                String raw_speed_str = StringUtil.parseLiteralStr(result.get("speed").toString());
+                float speed = Float.parseFloat(raw_speed_str);
 
-            String raw_range_str = StringUtil.parseLiteralStr(result.get("range").toString());
-            float range = Float.parseFloat(raw_range_str);
+                String raw_range_str = StringUtil.parseLiteralStr(result.get("range").toString());
+                float range = Float.parseFloat(raw_range_str);
 
-            String raw_therat_cap_str = StringUtil.parseLiteralStr(result.get("threatCap").toString());
+                String raw_therat_cap_str = StringUtil.parseLiteralStr(result.get("threatCap").toString());
 
-            String raw_threat_index = StringUtil.parseLiteralStr(result.get("index").toString());
-            Integer threat_index = Integer.parseInt(raw_threat_index);
+                String raw_threat_index = StringUtil.parseLiteralStr(result.get("index").toString());
+                Integer threat_index = Integer.parseInt(raw_threat_index);
 
-            String raw_threat_enabled_index = StringUtil.parseLiteralStr(result.get("threat_enabled").toString());
-            boolean threat_enabled = false;
-            if (raw_threat_enabled_index.equals("true")) {
-                threat_enabled = true;
-            } else {
-                threat_enabled = false;
+                String raw_threat_enabled_index = StringUtil.parseLiteralStr(result.get("threat_enabled").toString());
+                boolean threat_enabled = false;
+                if (raw_threat_enabled_index.equals("true")) {
+                    threat_enabled = true;
+                } else {
+                    threat_enabled = false;
+                }
+                String raw_threat_type = StringUtil.parseLiteralStr(result.get("threatType").toString());
+                ThreatType type = ThreatType.valueOf(raw_threat_type);
+
+                Threat threat = new Threat(0, center_coord, speed, type);
+                threat.setThreat_cap(raw_therat_cap_str);
+                threat.setThreat_range(range);
+                threat.setIndex(threat_index);
+                threat.setEnabled(threat_enabled);
+                threats.add(threat);
             }
-
-            Threat threat = new Threat(0, center_coord, speed, ThreatType.DUMMY);
-            threat.setThreat_cap(raw_therat_cap_str);
-            threat.setThreat_range(range);
-            threat.setIndex(threat_index);
-            threat.setEnabled(threat_enabled);
-            threats.add(threat);
+            this.threats_cache = threats;
+            this.threat_updated = false;
+            return threats;
         }
-        this.threats_cache = threats;
-        this.threat_updated = false;
-        return threats;
     }
 
     private Model deleteAllObstacles() {
@@ -494,33 +510,37 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
     }
 
     @Override
-    public void addObstacle(Obstacle obs) {
-        Individual obs_individual = Obstacle_Class.createIndividual();
-        Individual region_individual = Region_Class.createIndividual();
-        Individual polygon_individual = Polygon_Class.createIndividual();
-        Individual lowerbound_individual = LowerBoundOfRegion_Class.createIndividual();
-        Individual upperbound_individual = UpperBoundOfRegion_Class.createIndividual();
-
-        Literal points = ontology_based_knowledge.createTypedLiteral(obs.getPointsStr());
+    public synchronized void addObstacle(Obstacle obs) {
+        try {
+            Individual obs_individual = Obstacle_Class.createIndividual();
+            Individual region_individual = Region_Class.createIndividual();
+            Individual polygon_individual = Polygon_Class.createIndividual();
+            Individual lowerbound_individual = LowerBoundOfRegion_Class.createIndividual();
+            Individual upperbound_individual = UpperBoundOfRegion_Class.createIndividual();
+            
+            Literal points = ontology_based_knowledge.createTypedLiteral(obs.getPointsStr());
 //        logger.debug("------------------"+points);
-        Literal max_x_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMaxX());
-        Literal max_y_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMaxY());
-        Literal min_x_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMinX());
-        Literal min_y_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMinY());
-        Literal obstacle_index = ontology_based_knowledge.createTypedLiteral(obs.getIndex());
-
-        obs_individual.addProperty(has_region, region_individual);
-        region_individual.addProperty(has_polygon, polygon_individual);
-        region_individual.addProperty(hasObstacleIndex, obstacle_index);
-        polygon_individual.addProperty(has_points, points);
-        region_individual.addProperty(has_lowerbound, lowerbound_individual);
-        region_individual.addProperty(has_upperbound, upperbound_individual);
-        lowerbound_individual.addProperty(hasMinXCoordinate, min_x_coordinate);
-        lowerbound_individual.addProperty(hasMinYCoordinate, min_y_coordinate);
-        upperbound_individual.addProperty(hasMaxXCoordinate, max_x_coordinate);
-        upperbound_individual.addProperty(hasMaxYCoordinate, max_y_coordinate);
-        this.obstacle_num++;
-        this.obstacle_updated = true;
+            Literal max_x_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMaxX());
+            Literal max_y_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMaxY());
+            Literal min_x_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMinX());
+            Literal min_y_coordinate = ontology_based_knowledge.createTypedLiteral(obs.getMbr().getMinY());
+            Literal obstacle_index = ontology_based_knowledge.createTypedLiteral(obs.getIndex());
+            
+            obs_individual.addProperty(has_region, region_individual);
+            region_individual.addProperty(has_polygon, polygon_individual);
+            region_individual.addProperty(hasObstacleIndex, obstacle_index);
+            polygon_individual.addProperty(has_points, points);
+            region_individual.addProperty(has_lowerbound, lowerbound_individual);
+            region_individual.addProperty(has_upperbound, upperbound_individual);
+            lowerbound_individual.addProperty(hasMinXCoordinate, min_x_coordinate);
+            lowerbound_individual.addProperty(hasMinYCoordinate, min_y_coordinate);
+            upperbound_individual.addProperty(hasMaxXCoordinate, max_x_coordinate);
+            upperbound_individual.addProperty(hasMaxYCoordinate, max_y_coordinate);
+            this.obstacle_num++;
+            this.obstacle_updated = true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
@@ -565,37 +585,41 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
     }
 
     @Override
-    public void addThreat(Threat threat) {
-        Individual threat_individual = Threat_Class.createIndividual();
+    public synchronized void addThreat(Threat threat) {
+        if (threat != null) {
+            Individual threat_individual = Threat_Class.createIndividual();
+            
+            Literal center = ontology_based_knowledge.createTypedLiteral(threat.getCoordinates()[0] + "," + threat.getCoordinates()[1]);
+            Literal speed = ontology_based_knowledge.createTypedLiteral(threat.getSpeed());
+            Literal threat_range = ontology_based_knowledge.createTypedLiteral(threat.getThreat_range());
+            Literal threat_cap = ontology_based_knowledge.createTypedLiteral(threat.getThreat_cap());
+            Literal threat_index = ontology_based_knowledge.createTypedLiteral(threat.getIndex());
+            Literal threat_enabled = ontology_based_knowledge.createTypedLiteral(threat.isEnabled());
+            Literal threat_type = ontology_based_knowledge.createTypedLiteral(threat.getThreatType().toString());
 
-        Literal center = ontology_based_knowledge.createTypedLiteral(threat.getCoordinates()[0] + "," + threat.getCoordinates()[1]);
-        Literal speed = ontology_based_knowledge.createTypedLiteral(threat.getSpeed());
-        Literal threat_range = ontology_based_knowledge.createTypedLiteral(threat.getThreat_range());
-        Literal threat_cap = ontology_based_knowledge.createTypedLiteral(threat.getThreat_cap());
+            threat_individual.addProperty(hasThreatCenter, center);
+            threat_individual.addProperty(hasThreatSpeed, speed);
+            threat_individual.addProperty(hasThreatRange, threat_range);
+            threat_individual.addProperty(hasThreatCapability, threat_cap);
+            threat_individual.addProperty(hasThreatIndex, threat_index);
+            threat_individual.addProperty(threatEnabled, threat_enabled);
+            threat_individual.addProperty(hasType, threat_type);
+            this.threat_num++;
+            this.threat_updated = true;
+        }
+    }
+
+    @Override
+    public synchronized boolean containsThreat(Threat threat) {
         Literal threat_index = ontology_based_knowledge.createTypedLiteral(threat.getIndex());
-        Literal threat_enabled = ontology_based_knowledge.createTypedLiteral(threat.isEnabled());
-
-        threat_individual.addProperty(hasThreatCenter, center);
-        threat_individual.addProperty(hasThreatSpeed, speed);
-        threat_individual.addProperty(hasThreatRange, threat_range);
-        threat_individual.addProperty(hasThreatCapability, threat_cap);
-        threat_individual.addProperty(hasThreatIndex, threat_index);
-        threat_individual.addProperty(threatEnabled, threat_enabled);
-        this.threat_num++;
-        this.threat_updated = true;
-    }
-
-    @Override
-    public boolean containsThreat(Threat threat) {
-        Literal center = ontology_based_knowledge.createTypedLiteral(threat.getCoordinates()[0] + "," + threat.getCoordinates()[1]);
-        Selector selector = new SimpleSelector(null, hasThreatCenter, center);
+        Selector selector = new SimpleSelector(null, hasThreatIndex, threat_index);
         Model result_model = ontology_based_knowledge.query(selector);
-//        printStatements(result_model);
         return result_model.listStatements().hasNext();
+//        printStatements(result_model);
     }
 
     @Override
-    public boolean containsObstacle(Obstacle obstacle) {
+    public synchronized boolean containsObstacle(Obstacle obstacle) {
         Literal points = ontology_based_knowledge.createTypedLiteral(obstacle.getPointsStr());
         Selector selector = new SimpleSelector(null, has_points, points);
         Model result_model = ontology_based_knowledge.query(selector);

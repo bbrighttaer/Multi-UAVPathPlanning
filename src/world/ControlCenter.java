@@ -149,10 +149,10 @@ public class ControlCenter implements KnowledgeAwareInterface {
                         if (attacker.getTarget_indicated_by_role() == null || attacker.getTarget_indicated_by_role().getIndex() != threat.getIndex()) {
                             attacker.setFly_mode(Attacker.FLYING_MODE);
                         }
-                        attacker.setTarget_indicated_by_role(threat);
-                        attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_ON_TASK);
-                        attacker.setNeed_to_replan(true);
-                        assigned_attacker.add(assigned_attacker_index);
+//                        attacker.setTarget_indicated_by_role(threat);
+//                        attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_ON_TASK);
+//                        attacker.setNeed_to_replan(true);
+//                        assigned_attacker.add(assigned_attacker_index);
                         break;
                     }
                 }
@@ -160,8 +160,8 @@ public class ControlCenter implements KnowledgeAwareInterface {
             }
             
             int remained_team_size=this.sub_team_size-attackers_locked.size();
-            ArrayList<Attacker> attacker_arr_to_assign = new ArrayList<Attacker>();
-            ArrayList<Float> attacker_dist_to_assign = new ArrayList<Float>();
+            ArrayList<Attacker> attacker_arr_to_assign = new ArrayList<>();
+            ArrayList<Float> attacker_dist_to_assign = new ArrayList<>();
             for (int j = 0; j < attacker_num; j++) {
                 Attacker current_attacker = this.attackers.get(j);
                 if (!current_attacker.isEnduranceCapReachable(threat)) {
@@ -209,9 +209,10 @@ public class ControlCenter implements KnowledgeAwareInterface {
                     if (attacker.getFly_mode() == Attacker.TARGET_LOCKED_MODE) {
                         continue;
                     }
+                    
+                                       
                     assigned_attacker.add(attacker.getIndex());
                     attacker.setTarget_indicated_by_role(threat);
-
                     attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_ON_TASK);
                     attacker.setNeed_to_replan(true);
                     attacker.setFly_mode(Attacker.FLYING_MODE);
@@ -227,11 +228,11 @@ public class ControlCenter implements KnowledgeAwareInterface {
             }
             if (!assigned_attacker.contains(current_attacker.getIndex()) && current_attacker.getTarget_indicated_by_role() != null && current_attacker.getTarget_indicated_by_role().getIndex() != -1) {
                 float[] dummy_threat_coord = World.assignUAVPortInBase(current_attacker.getIndex());
-                Threat dummy_threat = new Threat(-1, dummy_threat_coord, 0, ThreatType.DUMMY);
-                current_attacker.setTarget_indicated_by_role(dummy_threat);
-                current_attacker.setNeed_to_replan(true);
-                current_attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_IDLE);
-                current_attacker.setFly_mode(Attacker.FLYING_MODE);
+//                Threat dummy_threat = new Threat(-1, dummy_threat_coord, 0, ThreatType.DUMMY);
+//                current_attacker.setTarget_indicated_by_role(dummy_threat);
+//                current_attacker.setNeed_to_replan(true);
+//                current_attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_IDLE);
+//                current_attacker.setFly_mode(Attacker.FLYING_MODE);
             }
         }
         need_to_assign_role = false;
