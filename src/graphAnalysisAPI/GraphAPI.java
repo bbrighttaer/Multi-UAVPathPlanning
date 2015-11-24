@@ -15,6 +15,7 @@ import world.model.Obstacle;
 import world.model.Threat;
 import world.uav.Attacker;
 import world.uav.Scout;
+import world.uav.UAV;
 
 /**
  * <p>
@@ -113,6 +114,16 @@ public class GraphAPI
      */
     public void setSelectedTask(Threat selectedTask) {
         this.selectedTask = selectedTask;
+    }
+    
+    /**
+     * Gets the center of a given UAV
+     * @param uav
+     * @return 
+     */
+    public float[] getCenterCoordinatesOfUAV(UAV uav)
+    {
+        return uav.getCenter_coordinates();
     }
     
     

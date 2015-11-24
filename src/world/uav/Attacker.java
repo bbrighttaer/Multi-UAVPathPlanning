@@ -95,7 +95,7 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
             rrt_alg = new RRTAlg(super.getCenter_coordinates(), target.getCoordinates(), StaticInitConfig.rrt_goal_toward_probability, World.bound_width, World.bound_height, StaticInitConfig.rrt_iteration_times, speed, null, this.getConflicts(), this.index);
         }
         initColor(index);
-        //attackThreatDaemon();
+//        attackThreatDaemon();
     }
 
  
@@ -555,7 +555,7 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
                     }
                 }
             }
-        }, 5000, 500);
+        }, 500, 500);
     }
 
 }

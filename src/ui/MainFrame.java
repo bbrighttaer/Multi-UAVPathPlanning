@@ -10,11 +10,13 @@ import graphAnalysisAPI.GraphAPI.GraphAPIobjectFactory;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import world.model.Threat;
+import world.uav.Attacker;
 
 /**
  *
@@ -55,6 +57,7 @@ public class MainFrame extends javax.swing.JFrame {
             {
                 final Threat selThreat = (Threat)SimulationComponentsUIx.jList_threats.getSelectedValue();
                 graphAPI.setSelectedTask(selThreat);
+                
             }
         });
     }

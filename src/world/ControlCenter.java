@@ -135,7 +135,7 @@ public class ControlCenter implements KnowledgeAwareInterface {
             Set<Integer> attackers_locked=this.locked_threat.get(threat.getIndex());
             if(attackers_locked==null)
             {
-                attackers_locked=new TreeSet<Integer>();
+                attackers_locked=new TreeSet<>();
             }
             assigned_attacker.addAll(attackers_locked);
             //mannaually assign

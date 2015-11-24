@@ -80,6 +80,8 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
 
         jSplitPane1.setRightComponent(jSplitPane2);
 
+        jSplitPane3.setDividerLocation(200);
+
         controlPanel1.setMaximumSize(new java.awt.Dimension(200, 119));
         controlPanel1.setPreferredSize(new java.awt.Dimension(200, 119));
         jSplitPane3.setLeftComponent(controlPanel1);
