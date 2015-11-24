@@ -30,6 +30,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.PrintUtil;
 import config.FilePathConfig;
+import enumeration.ThreatType;
 import java.awt.Polygon;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -138,9 +139,8 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         float[] coord = new float[2];
         coord[0] = 2;
         coord[1] = 3;
-        Threat threat = new Threat(0, coord, 0, 3);
+        Threat threat = new Threat(0, coord, 0, ThreatType.DUMMY);
         threat.setSpeed(2);
-        threat.setTarget_type(0);
         threat.setThreat_cap("aaa");
         threat.setThreat_range(2);
         threat.setEnabled(false);
@@ -149,7 +149,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
         float[] coord1 = new float[2];
         coord1[0] = 1;
         coord1[0] = 2;
-        Threat threat1 = new Threat(1, coord1, 2, 4);
+        Threat threat1 = new Threat(1, coord1, 4, ThreatType.DUMMY);
         threat1.setEnabled(false);
         kb.addThreat(threat1);
         kb.removeThreat(threat1);
@@ -410,7 +410,7 @@ public class OntologyBasedKnowledge extends KnowledgeInterface {
                 threat_enabled = false;
             }
 
-            Threat threat = new Threat(0, center_coord, 0, speed);
+            Threat threat = new Threat(0, center_coord, speed, ThreatType.DUMMY);
             threat.setThreat_cap(raw_therat_cap_str);
             threat.setThreat_range(range);
             threat.setIndex(threat_index);

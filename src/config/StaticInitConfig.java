@@ -16,10 +16,10 @@ public class StaticInitConfig {
 
     public static boolean SIMULATION_ON = true; //enable simulation
 
-    public static Integer ATTACKER_NUM = 10; //The number of our attackers
-    public static Integer SCOUT_NUM = 1; //The number of our attackers
+    public static Integer ATTACKER_NUM = 24; //The number of our attackers
+    public static Integer SCOUT_NUM = 5; //The number of our attackers
     public static Integer ENEMY_UAV_NUM = 0; //The number of enemy uavs
-    public static Integer THREAT_NUM = 20; //The number of enemy threats
+    public static Integer THREAT_NUM = 32; //The number of enemy threats
 
     public static boolean VIEW_OBSTACLE = false; //Determine whether an obstacle is detected
     public static boolean VIEW_THREAT = false; //Determine whether a threat is detected

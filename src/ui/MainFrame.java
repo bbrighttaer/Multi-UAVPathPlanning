@@ -5,7 +5,15 @@
  */
 package ui;
 
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import world.model.Threat;
 
 /**
  *
@@ -14,12 +22,40 @@ import javax.swing.JSplitPane;
 public class MainFrame extends javax.swing.JFrame {
 
 
+    DefaultListModel listModel;
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    public MainFrame() 
+    {
+        this.listModel = new DefaultListModel();
         initComponents();
         this.animationPanel1.start();
+        initiateThreatsInList();
+        this.jSplitPane1.setDividerLocation(.9);
+    }
+
+    private void initiateThreatsInList()
+    {
+        SimulationComponentsUIx.jList_threats.setModel(listModel);
+        List<Threat> threats = animationPanel1.getWorld().getThreats();
+        for(Threat threat : threats)
+        {
+            listModel.addElement(threat);
+        }
+        SimulationComponentsUIx.jList_threats.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(null, SimulationComponentsUIx.jList_threats.getSelectedValue().toString());
+                    }
+                }).start();
+            }
+        });
     }
 
     /**
@@ -35,15 +71,14 @@ public class MainFrame extends javax.swing.JFrame {
         rightControlPanel1 = new ui.RightControlPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(1000, 603));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new java.awt.Dimension(1000, 603));
-        setResizable(false);
 
         jSplitPane1.setDividerLocation(800);
         jSplitPane1.setDividerSize(1);
-        jSplitPane1.setMaximumSize(new java.awt.Dimension(1000, 603));
-        jSplitPane1.setMinimumSize(new java.awt.Dimension(1000, 603));
-        jSplitPane1.setPreferredSize(new java.awt.Dimension(1000, 603));
+        jSplitPane1.setMaximumSize(null);
+        jSplitPane1.setMinimumSize(new java.awt.Dimension(1300, 985));
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(1300, 985));
         this.animationPanel1=new AnimationPanel();
 
         this.jSplitPane1.add(animationPanel1,  JSplitPane.LEFT);
@@ -57,7 +92,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -71,21 +106,12 @@ public class MainFrame extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */

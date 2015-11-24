@@ -55,17 +55,32 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
 
         jSplitPane1 = new javax.swing.JSplitPane();
         controlPanel1 = new ui.ControlPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        simulationComponentsUIx1 = new ui.SimulationComponentsUIx();
+
+        setMaximumSize(new java.awt.Dimension(200, 630));
+        setMinimumSize(new java.awt.Dimension(200, 630));
+        setPreferredSize(new java.awt.Dimension(200, 630));
 
         jSplitPane1.setDividerLocation(200);
         jSplitPane1.setDividerSize(1);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        controlPanel1.setMaximumSize(new java.awt.Dimension(200, 119));
+        controlPanel1.setPreferredSize(new java.awt.Dimension(200, 119));
         jSplitPane1.setTopComponent(controlPanel1);
+
+        jSplitPane2.setDividerLocation(200);
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jScrollPane1.setViewportView(jTree1);
 
-        jSplitPane1.setRightComponent(jScrollPane1);
+        jSplitPane2.setTopComponent(jScrollPane1);
+        jSplitPane2.setRightComponent(simulationComponentsUIx1);
+
+        jSplitPane1.setRightComponent(jSplitPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -89,7 +104,9 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
     private ui.ControlPanel controlPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    public static javax.swing.JTree jTree1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private static javax.swing.JTree jTree1;
+    private ui.SimulationComponentsUIx simulationComponentsUIx1;
     // End of variables declaration//GEN-END:variables
 
     @Override

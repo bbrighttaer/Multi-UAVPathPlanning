@@ -9,6 +9,7 @@ import algorithm.RRT.RRTAlg;
 import algorithm.RRT.RRTTree;
 import config.NonStaticInitConfig;
 import config.StaticInitConfig;
+import enumeration.AttackerType;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import util.BoundUtil;
@@ -58,20 +59,28 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
 
     public static int FLYING_MODE = 0;
     public static int TARGET_LOCKED_MODE = 1;
-
+    
+    private AttackerType attackerType;
 
 
     /** constructor
      *
      * @param index
      * @param target
+     * @param uav_type
      * @param center_coordinates
+     * @param obstacles
+     * @param remained_energy
+     * @param attackerType
      */
-    public Attacker(int index, Target target, int uav_type, float[] center_coordinates, ArrayList<Obstacle> obstacles, float remained_energy) {
+    public Attacker(int index, Target target, int uav_type, float[] center_coordinates,
+                                        ArrayList<Obstacle> obstacles, float remained_energy, AttackerType attackerType)
+    {
         super(index, target, uav_type, center_coordinates, remained_energy);
         this.uav_radar = new Circle(center_coordinates[0], center_coordinates[1], StaticInitConfig.attacker_radar_radius);
         this.path_planned_at_current_time_step = new UAVPath();
         this.history_path = new UAVPath();
+        this.attackerType = attackerType;
         setPreviousWaypoint();
         this.kb = new OntologyBasedKnowledge();//OntologyBasedKnowledge();WorldKnowledge
         this.kb.setObstacles(obstacles);
@@ -496,6 +505,20 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
     @Override
     public boolean containsObstacle(Obstacle obstacle) {
         return this.kb.containsObstacle(obstacle);
+    }
+
+    /**
+     * @return the attackerType
+     */
+    public AttackerType getAttackerType() {
+        return attackerType;
+    }
+
+    /**
+     * @param attackerType the attackerType to set
+     */
+    public void setAttackerType(AttackerType attackerType) {
+        this.attackerType = attackerType;
     }
 
 }

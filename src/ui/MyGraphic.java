@@ -20,6 +20,7 @@ import world.uav.Attacker;
 import world.model.shape.Circle;
 import world.model.Obstacle;
 import world.model.Threat;
+import world.uav.Scout;
 import world.uav.UAV;
 import world.uav.UAVBase;
 import world.uav.UAVPath;
@@ -46,8 +47,8 @@ public class MyGraphic {
     }
 
     public void showObstacleInFogOfWar(Graphics2D graphics, Obstacle obs) {
-        graphics.setComposite(AlphaComposite.Clear);
-        graphics.fill(obs.getMbr());
+//        graphics.setComposite(AlphaComposite.Clear);
+//        graphics.fill(obs.getMbr());
     }
 
     public void showThreatInFogOfWar(Graphics2D graphics, Threat threat) {
@@ -78,11 +79,24 @@ public class MyGraphic {
             graphics.setColor(uav_radar_color_inner);
             graphics.fill(uav_radar_inner);
         }
-        graphics.setColor(uav.getCenter_color());
-        graphics.fillPolygon(uav.getUav_center());
+        
+        if(uav instanceof Scout)
+        {            
+            setScoutColor(graphics, (Scout)uav);
+            graphics.fillPolygon(uav.getUav_center());
+        }
+        else if(uav instanceof Attacker)
+        {            
+            setAttackerColor(graphics, (Attacker)uav);
+            graphics.fillPolygon(uav.getUav_center());
+        }else
+        {
+            graphics.setColor(uav.getCenter_color());
+            graphics.fillPolygon(uav.getUav_center());
+        }
 
         if (uav_highlight_color != null) {
-            graphics.setColor(uav_highlight_color);
+            graphics.setColor(Color.WHITE);
             graphics.draw(uav_radar_outter);
         }
     }
@@ -232,6 +246,7 @@ public class MyGraphic {
         int[] upper_left_point = new int[2];
         upper_left_point[0] = (int) threat.getCoordinates()[0] - Threat.threat_width / 2;
         upper_left_point[1] = (int) threat.getCoordinates()[1] - Threat.threat_height / 2;
+        setThreatColor(graphics, threat);
         this.drawTankTarget(graphics, upper_left_point, Threat.threat_width, Threat.threat_height);
     }
 
@@ -243,5 +258,89 @@ public class MyGraphic {
 //        graphics.setColor(GraphicConfig.uav_base_color);
 //        graphics.fillRect((int) uav_base.getCoordinate()[0], (int) uav_base.getCoordinate()[1], uav_base.getBase_width(), uav_base.getBase_height());
         graphics.drawImage(uav_base.getImage(), (int) uav_base.getCoordinate()[0], (int) uav_base.getCoordinate()[1], (int) uav_base.getBase_shape().getRadius() * 2 / 3, (int) uav_base.getBase_shape().getRadius() * 2 / 3, null);
+    }
+    
+    private void setThreatColor(Graphics2D graphics, Threat threat)
+    {
+        switch(threat.getThreatType())
+        {
+            case TYPE0:
+                graphics.setColor(Color.RED);
+                break;
+            case TYPE1:
+                graphics.setColor(Color.PINK);
+                break;
+            case TYPE2:
+                graphics.setColor(Color.BLACK);
+                break;
+            case TYPE3:
+                graphics.setColor(Color.YELLOW);
+                break;
+            case TYPE4:
+                graphics.setColor(Color.ORANGE);
+                break;
+            case TYPE5:
+                graphics.setColor(Color.GRAY);
+                break;
+            default:
+                graphics.setColor(Color.BLUE);
+                break;
+        }
+    }
+    
+    private void setScoutColor(Graphics2D graphics, Scout scout)
+    {
+        switch(scout.getScoutType())
+        {
+            case TYPE0:
+                graphics.setColor(Color.RED);
+                break;
+            case TYPE1:
+                graphics.setColor(Color.PINK);
+                break;
+            case TYPE2:
+                graphics.setColor(Color.BLACK);
+                break;
+            case TYPE3:
+                graphics.setColor(Color.YELLOW);
+                break;
+            case TYPE4:
+                graphics.setColor(Color.ORANGE);
+                break;
+            case TYPE5:
+                graphics.setColor(Color.GRAY);
+                break;
+            default:
+                graphics.setColor(scout.getCenter_color());
+                break;
+        }
+    }
+        
+    private void setAttackerColor(Graphics2D graphics, Attacker attacker)
+    {
+        switch(attacker.getAttackerType())
+        {
+            case TYPE0:
+                graphics.setColor(Color.RED);
+                break;
+            case TYPE1:
+                graphics.setColor(Color.PINK);
+                break;
+            case TYPE2:
+                graphics.setColor(Color.BLACK);
+                break;
+            case TYPE3:
+                graphics.setColor(Color.YELLOW);
+                break;
+            case TYPE4:
+                graphics.setColor(Color.ORANGE);
+                break;
+            case TYPE5:
+                graphics.setColor(Color.GRAY);
+                break;
+            default:
+                graphics.setColor(attacker.getCenter_color());
+                break;
+        }
     }
 }

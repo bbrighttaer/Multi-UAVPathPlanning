@@ -5,6 +5,7 @@
  */
 package world.model;
 
+import enumeration.ThreatType;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import javax.swing.event.TreeModelListener;
@@ -41,8 +42,8 @@ public class WorldKnowledge extends KnowledgeInterface {
         obstacles.add(obstacle1);
         obstacles.add(obstacle2);
 
-        Threat threat1 = new Threat(0, null, 1,2);
-        Threat threat2 = new Threat(1, null, 1,4);
+        Threat threat1 = new Threat(0, null, 1,ThreatType.DUMMY);
+        Threat threat2 = new Threat(1, null, 1, ThreatType.DUMMY);
         threats.add(threat1);
         threats.add(threat2);
 

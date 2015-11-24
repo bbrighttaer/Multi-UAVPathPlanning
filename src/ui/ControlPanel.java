@@ -60,18 +60,19 @@ public class ControlPanel extends javax.swing.JPanel {
         jButton4 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
+        setPreferredSize(null);
+
         jSplitPane1.setDividerLocation(100);
         jSplitPane1.setDividerSize(1);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jSplitPane2.setDividerLocation(98);
         jSplitPane2.setDividerSize(1);
-        jSplitPane2.setPreferredSize(new java.awt.Dimension(200, 49));
 
         jSplitPane4.setDividerLocation(50);
         jSplitPane4.setDividerSize(1);
         jSplitPane4.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPane4.setPreferredSize(new java.awt.Dimension(95, 47));
+        jSplitPane4.setPreferredSize(null);
 
         jButton3.setFont(new java.awt.Font("Songti SC", 0, 10)); // NOI18N
         jButton3.setText("Hide Path");
@@ -99,6 +100,7 @@ public class ControlPanel extends javax.swing.JPanel {
         jSplitPane5.setDividerLocation(50);
         jSplitPane5.setDividerSize(1);
         jSplitPane5.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane5.setPreferredSize(null);
 
         jButton2.setFont(new java.awt.Font("宋体", 0, 10)); // NOI18N
         jButton2.setText("Show War Fog");
@@ -118,11 +120,12 @@ public class ControlPanel extends javax.swing.JPanel {
 
         jSplitPane3.setDividerLocation(98);
         jSplitPane3.setDividerSize(1);
-        jSplitPane3.setPreferredSize(new java.awt.Dimension(200, 61));
+        jSplitPane3.setPreferredSize(null);
 
         jSplitPane6.setDividerLocation(50);
         jSplitPane6.setDividerSize(1);
         jSplitPane6.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane6.setPreferredSize(null);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("SpeedX1");
@@ -130,6 +133,7 @@ public class ControlPanel extends javax.swing.JPanel {
 
         jSplitPane7.setDividerLocation(46);
         jSplitPane7.setDividerSize(1);
+        jSplitPane7.setPreferredSize(null);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/Slow.jpg"))); // NOI18N
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -154,6 +158,7 @@ public class ControlPanel extends javax.swing.JPanel {
         jSplitPane8.setDividerLocation(50);
         jSplitPane8.setDividerSize(1);
         jSplitPane8.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane8.setPreferredSize(null);
 
         jButton4.setText("Show Tree");
         jButton4.addActionListener(new java.awt.event.ActionListener() {

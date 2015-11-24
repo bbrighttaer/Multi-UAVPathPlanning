@@ -8,7 +8,6 @@ package ui;
 import config.GraphicConfig;
 import config.NonStaticInitConfig;
 import config.StaticInitConfig;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,6 +19,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -45,8 +45,8 @@ public class AnimationPanel extends JPanel implements MouseListener {
     /**
      * -------------outside variable---------------
      */
-    private int bound_width = 800; //The size of paint
-    private int bound_height = 600;
+    private int bound_width; //The size of paint
+    private int bound_height;
 
     /**
      * -------------internal variable---------------
@@ -99,8 +99,15 @@ public class AnimationPanel extends JPanel implements MouseListener {
         initComponents();
     }
 
-    public void initComponents() {
+    private void initComponents() {
         try {
+            //initiate world
+            NonStaticInitConfig init_config = new NonStaticInitConfig();
+            world = new World(init_config);
+            
+            //initiate parameters according to world
+            this.initParameterFromInitConfig(world);
+            
             transparent_color = GraphicConfig.transparent_color;
             Color fog_of_war_color = GraphicConfig.fog_of_war_color;//Color.black;
 
@@ -150,10 +157,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
 
             //initate mygraphic
             virtualizer = new MyGraphic();
-
-            //initiate world
-            NonStaticInitConfig init_config = new NonStaticInitConfig();
-            world = new World(init_config);
+            
             this.scouts = world.getScouts();
             this.attackers = world.getAttackers();
             this.control_center = world.getControl_center();
@@ -165,9 +169,6 @@ public class AnimationPanel extends JPanel implements MouseListener {
 //            this.updateTargetInUAVImageLevel(world.getThreatsForUIRendering());
 
             this.initFogOfWarImage();
-
-            //initiate parameters according to world
-            this.initParameterFromInitConfig(world);
 
             my_popup_menu = new MyPopupMenu(world.getControl_center());
             this.addMouseListener(this);
@@ -287,7 +288,7 @@ public class AnimationPanel extends JPanel implements MouseListener {
     }
 
     private void updateThreatImage() {
-        ArrayList<Threat> threats = control_center.getThreats();
+        List<Threat> threats = world.getThreats();
         for (Threat threat : threats) {
             if (!threat.isEnabled()) {
                 continue;
@@ -390,13 +391,13 @@ public class AnimationPanel extends JPanel implements MouseListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background_image_level_1, 0, 0, null);
+        g.drawImage(background_image_level_1, 0, 0, getWidth(), getHeight(),null);
         g.drawImage(obstacle_image_level_2, 0, 0, null);
         g.drawImage(this.highlight_obstacle_image_level_3, 0, 0, null);
         g.drawImage(this.threat_image_level_9, 0, 0, null);
         g.drawImage(enemy_uav_image_level_4, 0, 0, null);
         if (StaticInitConfig.SHOW_FOG_OF_WAR) {
-            g.drawImage(fog_of_war_image_level_5, 0, 0, null);
+            g.drawImage(fog_of_war_image_level_5, 0, 0,bound_width, bound_height, null);
         }
         if (StaticInitConfig.SHOW_HISTORY_PATH) {
             g.drawImage(uav_history_path_image_level_6, 0, 0, null);
@@ -501,4 +502,10 @@ public class AnimationPanel extends JPanel implements MouseListener {
 //            logger.debug(panel.getSize().width + "-" + panel.getSize().height);
         }
     }
+
+    public World getWorld() {
+        return world;
+    }
+    
+    
 }

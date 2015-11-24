@@ -6,6 +6,7 @@
 package world;
 
 import config.StaticInitConfig;
+import enumeration.ThreatType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -226,7 +227,7 @@ public class ControlCenter implements KnowledgeAwareInterface {
             }
             if (!assigned_attacker.contains(current_attacker.getIndex()) && current_attacker.getTarget_indicated_by_role() != null && current_attacker.getTarget_indicated_by_role().getIndex() != -1) {
                 float[] dummy_threat_coord = World.assignUAVPortInBase(current_attacker.getIndex());
-                Threat dummy_threat = new Threat(-1, dummy_threat_coord, 0, 0);
+                Threat dummy_threat = new Threat(-1, dummy_threat_coord, 0, ThreatType.DUMMY);
                 current_attacker.setTarget_indicated_by_role(dummy_threat);
                 current_attacker.setNeed_to_replan(true);
                 current_attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_IDLE);
@@ -280,7 +281,7 @@ public class ControlCenter implements KnowledgeAwareInterface {
             Attacker attacker = this.attackers.get(attacker_index);
             attacker.setFly_mode(Attacker.FLYING_MODE);
             float[] dummy_threat_coord = World.assignUAVPortInBase(attacker.getIndex());
-            Threat dummy_threat = new Threat(Threat.UAV_BASE_INDEX, dummy_threat_coord, 0, 0);
+            Threat dummy_threat = new Threat(Threat.UAV_BASE_INDEX, dummy_threat_coord, 0, ThreatType.DUMMY);
             attacker.setTarget_indicated_by_role(dummy_threat);
             attacker.setNeed_to_replan(true);
             attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_IDLE);

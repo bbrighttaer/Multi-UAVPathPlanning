@@ -10,8 +10,13 @@ import world.model.Threat;
 import world.model.Obstacle;
 import config.NonStaticInitConfig;
 import config.StaticInitConfig;
+import enumeration.AttackerType;
+import enumeration.ScoutType;
+import enumeration.ThreatType;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import ui.RightControlPanel;
 import util.BoundUtil;
 import util.ConflictCheckUtil;
@@ -153,15 +158,59 @@ public class World {
         uav_base_center[0] = uav_base_coordinate[0];// + uav_base_width / 2;
         uav_base_center[1] = uav_base_coordinate[1]; //+ uav_base_height / 2;
         for (int i = 0; i < attacker_num; i++) {
-            float[] uav_init_coord = uav_base.assignUAVLocation(i);
-            Attacker attacker = new Attacker(i, null, StaticInitConfig.ATTACKER, uav_init_coord, null, Float.MAX_VALUE);
+            float[] uav_init_coord = uav_base.getCoordinate();//uav_base.assignUAVLocation(i);
+            Attacker attacker;
+            attacker = new Attacker(i, null, StaticInitConfig.ATTACKER, 
+                    uav_init_coord, null, Float.MAX_VALUE, getAttackerType(i));
             attackers.add(attacker);
         }
 
         for (int i = 0; i < scout_num; i++) {
-            Scout scout = new Scout(i, StaticInitConfig.SCOUT, uav_base_center, uav_base_center, control_center, Float.MAX_VALUE);
+            Scout scout;
+            scout = new Scout(i, StaticInitConfig.SCOUT, uav_base_center, 
+                    uav_base_center, Float.MAX_VALUE, getScoutType(i));
             scouts.add(scout);
         }
+    }
+    
+    /**
+     * Uses modulo operation to select a scout or attacker type
+     * @param uavIndex
+     * @return Scout type
+     */
+    private ScoutType getScoutType(int uavIndex)
+    {
+        int selectedType = (uavIndex % ScoutType.values().length);
+        ScoutType type = null;
+        ScoutType[] values = ScoutType.values();
+        for (ScoutType value : values) 
+        {
+            if (value.getType() == selectedType) {
+                type = value;
+                break;
+            }
+        }
+        return type;
+    }
+    
+    /**
+     * Uses modulo operation to select an attacker type
+     * @param uavIndex
+     * @return Attacker type
+     */
+    private AttackerType getAttackerType(int uavIndex)
+    {
+        int selectedType = (uavIndex % AttackerType.values().length);
+        AttackerType type = null;
+        AttackerType[] values = AttackerType.values();
+        for (AttackerType value : values) 
+        {
+            if (value.getType() == selectedType) {
+                type = value;
+                break;
+            }
+        }
+        return type;
     }
 
     /**initiate all uavs, including scouts and attackers.
@@ -271,7 +320,7 @@ public class World {
                                 this.num_of_threat_remained--;
                                 this.control_center.setNeed_to_assign_role(true);
                                 float[] dummy_threat_coord = World.assignUAVPortInBase(attacker.getIndex());
-                                Threat dummy_threat = new Threat(Threat.UAV_BASE_INDEX, dummy_threat_coord, 0, 0);
+                                Threat dummy_threat = new Threat(Threat.UAV_BASE_INDEX, dummy_threat_coord, 0, ThreatType.DUMMY);
                                 attacker.setTarget_indicated_by_role(dummy_threat);
                                 attacker.setNeed_to_replan(true);
                                 attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_IDLE);
@@ -648,7 +697,7 @@ public class World {
                 //returning to the base
                 if (attacker.getTarget_indicated_by_role().getIndex() == Threat.UAV_BASE_INDEX) {
                     float[] dummy_threat_coord = World.assignUAVPortInBase(attacker.getIndex());
-                    Threat dummy_threat = new Threat(Threat.UAV_BASE_INDEX, dummy_threat_coord, 0, 0);
+                    Threat dummy_threat = new Threat(Threat.UAV_BASE_INDEX, dummy_threat_coord, 0, ThreatType.DUMMY);
                     attacker.setTarget_indicated_by_role(dummy_threat);
                     attacker.setNeed_to_replan(true);
                     attacker.setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_IDLE);
@@ -778,4 +827,8 @@ public class World {
         return World.uav_base.assignUAVLocation(attacker_index);
     }
 
+    public List<Threat> getThreats() {
+        return Collections.unmodifiableList(threats);
+    }
+    
 }
