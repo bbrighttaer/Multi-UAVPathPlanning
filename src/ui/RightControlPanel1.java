@@ -24,19 +24,19 @@ import world.model.WorldKnowledge;
  *
  * @author boluo
  */
-public class RightControlPanel extends javax.swing.JPanel implements TreeSelectionListener,MouseListener,ActionListener {
+public class RightControlPanel1 extends javax.swing.JPanel implements TreeSelectionListener,MouseListener,ActionListener {
 
     private static KnowledgeInterface kb;
-    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(RightControlPanel.class);
+    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(RightControlPanel1.class);
     private JPopupMenu popMenu;
     /**
      * Creates new form RightControlPanel
      */
-    public RightControlPanel() {
+    public RightControlPanel1() {
         initComponents();
-        RightControlPanel.jTree1.addMouseListener(this);
-        RightControlPanel.jTree1.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        RightControlPanel.jTree1.addTreeSelectionListener(this);
+        RightControlPanel1.jTree1.addMouseListener(this);
+        RightControlPanel1.jTree1.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        RightControlPanel1.jTree1.addTreeSelectionListener(this);
         
         popMenu=new JPopupMenu();
         JMenuItem dellItem=new JMenuItem("删除");
@@ -54,58 +54,50 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        jSplitPane2 = new javax.swing.JSplitPane();
-        jSplitPane4 = new javax.swing.JSplitPane();
-        simulationComponentsUIx1 = new ui.SimulationComponentsUIx();
-        jSplitPane3 = new javax.swing.JSplitPane();
         controlPanel1 = new ui.ControlPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        simulationComponentsUIx1 = new ui.SimulationComponentsUIx();
 
-        setMaximumSize(new java.awt.Dimension(350, 630));
-        setMinimumSize(new java.awt.Dimension(350, 630));
-        setPreferredSize(new java.awt.Dimension(350, 630));
+        setMaximumSize(new java.awt.Dimension(200, 630));
+        setMinimumSize(new java.awt.Dimension(200, 630));
+        setPreferredSize(new java.awt.Dimension(200, 630));
 
         jSplitPane1.setDividerLocation(200);
         jSplitPane1.setDividerSize(1);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
+        controlPanel1.setMaximumSize(new java.awt.Dimension(200, 119));
+        controlPanel1.setPreferredSize(new java.awt.Dimension(200, 119));
+        jSplitPane1.setTopComponent(controlPanel1);
+
         jSplitPane2.setDividerLocation(200);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jSplitPane4.setDividerLocation(150);
-        jSplitPane4.setLeftComponent(simulationComponentsUIx1);
-
-        jSplitPane2.setLeftComponent(jSplitPane4);
-
-        jSplitPane1.setRightComponent(jSplitPane2);
-
-        controlPanel1.setMaximumSize(new java.awt.Dimension(200, 119));
-        controlPanel1.setPreferredSize(new java.awt.Dimension(200, 119));
-        jSplitPane3.setLeftComponent(controlPanel1);
-
         jScrollPane1.setViewportView(jTree1);
 
-        jSplitPane3.setRightComponent(jScrollPane1);
+        jSplitPane2.setTopComponent(jScrollPane1);
+        jSplitPane2.setRightComponent(simulationComponentsUIx1);
 
-        jSplitPane1.setLeftComponent(jSplitPane3);
+        jSplitPane1.setRightComponent(jSplitPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     public static void setWorldKnowledge(KnowledgeInterface kb)
     {
-        RightControlPanel.kb=kb;
-        RightControlPanel.jTree1.setModel(kb);
+        RightControlPanel1.kb=kb;
+        RightControlPanel1.jTree1.setModel(kb);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -113,15 +105,13 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
-    private javax.swing.JSplitPane jSplitPane3;
-    private javax.swing.JSplitPane jSplitPane4;
     private static javax.swing.JTree jTree1;
     private ui.SimulationComponentsUIx simulationComponentsUIx1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-        Object select_obj = RightControlPanel.jTree1.getLastSelectedPathComponent();
+        Object select_obj = RightControlPanel1.jTree1.getLastSelectedPathComponent();
         if (select_obj!=null&&kb.isLeaf(select_obj)) {
             String node_name = select_obj.toString();
             int index = -1;
@@ -151,11 +141,11 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
 
     @Override
     public void mousePressed(MouseEvent e) {
-        TreePath path=RightControlPanel.jTree1.getPathForLocation(e.getX(), e.getY());
+        TreePath path=RightControlPanel1.jTree1.getPathForLocation(e.getX(), e.getY());
         if(path==null)
             return;
-        RightControlPanel.jTree1.setSelectionPath(path);
-        boolean is_leaf_selected= RightControlPanel.kb.isLeaf(path.getLastPathComponent());
+        RightControlPanel1.jTree1.setSelectionPath(path);
+        boolean is_leaf_selected= RightControlPanel1.kb.isLeaf(path.getLastPathComponent());
         if(e.getButton()==MouseEvent.BUTTON3 && is_leaf_selected)
         {
             popMenu.show(jTree1, e.getX(), e.getY());
@@ -176,9 +166,9 @@ public class RightControlPanel extends javax.swing.JPanel implements TreeSelecti
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TreePath path=RightControlPanel.jTree1.getSelectionPath();
-        RightControlPanel.kb.deleteComponent(path,RightControlPanel.jTree1.getLastSelectedPathComponent());
-        RightControlPanel.jTree1.setModel(RightControlPanel.kb);
-        RightControlPanel.jTree1.removeSelectionPath(path);
+        TreePath path=RightControlPanel1.jTree1.getSelectionPath();
+        RightControlPanel1.kb.deleteComponent(path,RightControlPanel1.jTree1.getLastSelectedPathComponent());
+        RightControlPanel1.jTree1.setModel(RightControlPanel1.kb);
+        RightControlPanel1.jTree1.removeSelectionPath(path);
     }
 }

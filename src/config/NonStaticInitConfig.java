@@ -26,7 +26,7 @@ public class NonStaticInitConfig {
     private int attacker_num; //The number of our attackers
     private int scout_num; //The number of our scouts
     
-    private int bound_width=1680 ;
+    private int bound_width=1500 ;
     private int bound_height=1000;
 
     private ArrayList<Obstacle> obstacles;

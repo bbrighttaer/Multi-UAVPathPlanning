@@ -12,6 +12,8 @@ import config.StaticInitConfig;
 import enumeration.AttackerType;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import util.BoundUtil;
 import util.ConflictCheckUtil;
 import util.DistanceUtil;
@@ -43,6 +45,7 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
     private boolean need_to_replan = true;
     private boolean replanned_at_current_time_step = false;
     private boolean moved_at_last_time = false;
+    private final ArrayList<Threat> destroyedThreats;
 
     //variables for conflict planning
     private KnowledgeInterface kb;
@@ -77,6 +80,7 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
                                         ArrayList<Obstacle> obstacles, float remained_energy, AttackerType attackerType)
     {
         super(index, target, uav_type, center_coordinates, remained_energy);
+        this.destroyedThreats = new ArrayList<>();
         this.uav_radar = new Circle(center_coordinates[0], center_coordinates[1], StaticInitConfig.attacker_radar_radius);
         this.path_planned_at_current_time_step = new UAVPath();
         this.history_path = new UAVPath();
@@ -91,6 +95,7 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
             rrt_alg = new RRTAlg(super.getCenter_coordinates(), target.getCoordinates(), StaticInitConfig.rrt_goal_toward_probability, World.bound_width, World.bound_height, StaticInitConfig.rrt_iteration_times, speed, null, this.getConflicts(), this.index);
         }
         initColor(index);
+        //attackThreatDaemon();
     }
 
  
@@ -519,6 +524,38 @@ public class Attacker extends UAV implements KnowledgeAwareInterface {
      */
     public void setAttackerType(AttackerType attackerType) {
         this.attackerType = attackerType;
+    }
+    
+    public synchronized ArrayList<Threat> getDestroyedThreats() {
+        return destroyedThreats;
+    }
+    
+    private void attackThreatDaemon()
+    {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() 
+            {
+//                updateAll_local();
+                if(kb.getThreats().size() > 0)
+                {
+                    for(Threat threat : kb.getThreats())
+                    {
+                        if(!getDestroyedThreats().contains(threat) && getFly_mode()!= Attacker.TARGET_LOCKED_MODE)
+                        {
+                            if (threat.getThreatType().toString().equals(getAttackerType().toString())) 
+                            {
+                                setTarget_indicated_by_role(threat);
+                                setNeed_to_replan(true);
+                                setSpeed(StaticInitConfig.SPEED_OF_ATTACKER_ON_TASK);
+                                setFly_mode(Attacker.FLYING_MODE);
+                            }
+                        }
+                    }
+                }
+            }
+        }, 5000, 500);
     }
 
 }

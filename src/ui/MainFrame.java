@@ -35,7 +35,6 @@ public class MainFrame extends javax.swing.JFrame {
         graphAPI = GraphAPIobjectFactory.createGraphAPIobject(animationPanel1);
         this.animationPanel1.start();
         initiateThreatsInList();
-        this.jSplitPane1.setDividerLocation(1.0);
     }
     
     /**
@@ -76,14 +75,18 @@ public class MainFrame extends javax.swing.JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new java.awt.Dimension(1000, 603));
 
-        jSplitPane1.setDividerLocation(800);
-        jSplitPane1.setDividerSize(1);
+        jSplitPane1.setDividerLocation(1700);
+        jSplitPane1.setDividerSize(5);
         jSplitPane1.setMaximumSize(null);
         jSplitPane1.setMinimumSize(new java.awt.Dimension(1300, 985));
         jSplitPane1.setPreferredSize(new java.awt.Dimension(1300, 985));
         this.animationPanel1=new AnimationPanel();
 
         this.jSplitPane1.add(animationPanel1,  JSplitPane.LEFT);
+
+        rightControlPanel1.setMaximumSize(new java.awt.Dimension(200, 630));
+        rightControlPanel1.setMinimumSize(new java.awt.Dimension(200, 630));
+        rightControlPanel1.setPreferredSize(new java.awt.Dimension(200, 630));
         jSplitPane1.setRightComponent(rightControlPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

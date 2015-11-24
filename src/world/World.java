@@ -315,6 +315,7 @@ public class World {
                                 attacker.increaseHovered_time_step();
                             } else {
                                 threat.setEnabled(false);
+                                updateDestroyedThreats(threat);
                                 this.control_center.updateThreat(threat);
                                 this.control_center.threatDestroyedAndUnlocked(threat.getIndex());
                                 this.num_of_threat_remained--;
@@ -542,6 +543,13 @@ public class World {
                 point = new Point(coord_x, coord_y, threat_angle);
                 path.addWaypointToEnd(point);
             }
+        }
+    }
+    
+    public void updateDestroyedThreats(Threat threat) {
+        for(Attacker attacker : World.attackers)
+        {
+            attacker.getDestroyedThreats().add(threat);
         }
     }
 
